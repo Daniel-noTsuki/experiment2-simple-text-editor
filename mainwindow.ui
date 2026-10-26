@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>900</width><height>600</height></rect></property>
+  <property name="windowTitle"><string>简单文本编辑器</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin"><number>0</number></property><property name="topMargin"><number>0</number></property>
+    <property name="rightMargin"><number>0</number></property><property name="bottomMargin"><number>0</number></property>
+    <item><widget class="CodeEditor" name="editor"><property name="font"><font><family>Menlo</family><pointsize>12</pointsize></font></property></widget></item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <addaction name="menuFile"/><addaction name="menuEdit"/><addaction name="menuFormat"/><addaction name="menuView"/><addaction name="menuHelp"/>
+   <widget class="QMenu" name="menuFile"><property name="title"><string>文件(&amp;F)</string></property>
+    <addaction name="actionNew"/><addaction name="actionOpen"/><addaction name="actionSave"/><addaction name="actionSaveAs"/><addaction name="separator"/><addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit"><property name="title"><string>编辑(&amp;E)</string></property>
+    <addaction name="actionUndo"/><addaction name="actionRedo"/><addaction name="separator"/><addaction name="actionCut"/><addaction name="actionCopy"/><addaction name="actionPaste"/><addaction name="actionSelectAll"/><addaction name="separator"/><addaction name="actionFind"/><addaction name="actionReplace"/>
+   </widget>
+   <widget class="QMenu" name="menuFormat"><property name="title"><string>格式(&amp;O)</string></property>
+    <addaction name="actionWrap"/><addaction name="actionFont"/><addaction name="actionTextColor"/><addaction name="actionBackground"/>
+   </widget>
+   <widget class="QMenu" name="menuView"><property name="title"><string>查看(&amp;V)</string></property>
+    <addaction name="actionLineNumbers"/><addaction name="actionToolbar"/><addaction name="actionStatusbar"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp"><property name="title"><string>帮助(&amp;H)</string></property><addaction name="actionAbout"/></widget>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar"><property name="windowTitle"><string>工具栏</string></property>
+   <addaction name="actionNew"/><addaction name="actionOpen"/><addaction name="actionSave"/><addaction name="separator"/><addaction name="actionUndo"/><addaction name="actionRedo"/><addaction name="separator"/><addaction name="actionCut"/><addaction name="actionCopy"/><addaction name="actionPaste"/><addaction name="separator"/><addaction name="actionFind"/><addaction name="actionReplace"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNew"><property name="text"><string>新建(&amp;N)</string></property><property name="shortcut"><string>Ctrl+N</string></property></action>
+  <action name="actionOpen"><property name="text"><string>打开(&amp;O)</string></property><property name="shortcut"><string>Ctrl+O</string></property></action>
+  <action name="actionSave"><property name="text"><string>保存(&amp;S)</string></property><property name="shortcut"><string>Ctrl+S</string></property></action>
+  <action name="actionSaveAs"><property name="text"><string>另存为</string></property><property name="shortcut"><string>Ctrl+Shift+S</string></property></action>
+  <action name="actionExit"><property name="text"><string>退出</string></property></action>
+  <action name="actionUndo"><property name="text"><string>撤销</string></property><property name="shortcut"><string>Ctrl+Z</string></property></action>
+  <action name="actionRedo"><property name="text"><string>重做</string></property><property name="shortcut"><string>Ctrl+Shift+Z</string></property></action>
+  <action name="actionCut"><property name="text"><string>剪切</string></property><property name="shortcut"><string>Ctrl+X</string></property></action>
+  <action name="actionCopy"><property name="text"><string>复制</string></property><property name="shortcut"><string>Ctrl+C</string></property></action>
+  <action name="actionPaste"><property name="text"><string>粘贴</string></property><property name="shortcut"><string>Ctrl+V</string></property></action>
+  <action name="actionSelectAll"><property name="text"><string>全选</string></property><property name="shortcut"><string>Ctrl+A</string></property></action>
+  <action name="actionFind"><property name="text"><string>查找</string></property><property name="shortcut"><string>Ctrl+F</string></property></action>
+  <action name="actionReplace"><property name="text"><string>替换</string></property><property name="shortcut"><string>Ctrl+H</string></property></action>
+  <action name="actionWrap"><property name="checkable"><bool>true</bool></property><property name="checked"><bool>true</bool></property><property name="text"><string>自动换行</string></property></action>
+  <action name="actionFont"><property name="text"><string>字体</string></property></action>
+  <action name="actionTextColor"><property name="text"><string>字体颜色</string></property></action>
+  <action name="actionBackground"><property name="text"><string>编辑器背景色</string></property></action>
+  <action name="actionLineNumbers"><property name="checkable"><bool>true</bool></property><property name="checked"><bool>true</bool></property><property name="text"><string>显示行号</string></property></action>
+  <action name="actionToolbar"><property name="checkable"><bool>true</bool></property><property name="checked"><bool>true</bool></property><property name="text"><string>工具栏</string></property></action>
+  <action name="actionStatusbar"><property name="checkable"><bool>true</bool></property><property name="checked"><bool>true</bool></property><property name="text"><string>状态栏</string></property></action>
+  <action name="actionAbout"><property name="text"><string>关于</string></property></action>
+ </widget>
+ <customwidgets><customwidget><class>CodeEditor</class><extends>QPlainTextEdit</extends><header>codeeditor.h</header></customwidget></customwidgets>
+ <resources/><connections/>
+</ui>
