@@ -397,6 +397,13 @@ void MainWindow::captureEvidence(const QString &outputDir)
 {
     QDir().mkpath(outputDir);
     resize(980, 640);
+    auto saveMain = [&](const QString &name) {
+        repaint();
+        QApplication::processEvents();
+        grab().save(QDir(outputDir).filePath(name));
+    };
+
+    // 1 主界面、菜单工具栏与整体布局。
     ui->editor->setPlainText(QStringLiteral(
         "简单文本编辑器功能验证\n\n"
         "1. 文件新建、打开、保存和另存为\n"
@@ -406,8 +413,7 @@ void MainWindow::captureEvidence(const QString &outputDir)
         "5. 未保存提示、异常文件处理和定时备份"));
     ui->editor->document()->setModified(true);
     ui->editor->setFocus();
-    repaint(); QApplication::processEvents();
-    grab().save(QDir(outputDir).filePath(QStringLiteral("01-main-window.png")));
+    saveMain(QStringLiteral("01-main-window.png"));
 
     auto captureDialog = [&](QDialog *dialog, const QString &name) {
         dialog->show(); dialog->raise(); dialog->activateWindow();
@@ -418,4 +424,91 @@ void MainWindow::captureEvidence(const QString &outputDir)
     captureDialog(createFindDialog(false), QStringLiteral("02-find-dialog.png"));
     captureDialog(createFindDialog(true), QStringLiteral("03-replace-dialog.png"));
     captureDialog(createAboutDialog(), QStringLiteral("04-about-dialog.png"));
+
+    // 5 实际保存一个 UTF-8 文件，并显示保存结果与修改标记。
+    ui->editor->setPlainText(QStringLiteral("macOS 文件保存验证\n第一行\n第二行"));
+    QString error;
+    const QString savedPath = QDir(outputDir).filePath(QStringLiteral("实验2保存验证.txt"));
+    saveToPath(savedPath, &error);
+    statusBar()->showMessage(tr("已保存：%1").arg(savedPath));
+    saveMain(QStringLiteral("05-file-save-result.png"));
+
+    // 6 撤销、重做、剪切、复制、粘贴、全选与选区状态。
+    ui->editor->setPlainText(QStringLiteral("撤销  重做  剪切  复制  粘贴  全选\n"
+                                             "当前选区会同步启用剪切和复制操作。"));
+    QTextCursor editCursor = ui->editor->textCursor();
+    editCursor.setPosition(8);
+    editCursor.setPosition(14, QTextCursor::KeepAnchor);
+    ui->editor->setTextCursor(editCursor);
+    QApplication::clipboard()->setText(QStringLiteral("来自剪贴板的文本"));
+    updateActions();
+    statusBar()->showMessage(tr("已选中 %1 个字符；剪切、复制、粘贴均可用")
+                             .arg(editCursor.selectedText().size()));
+    saveMain(QStringLiteral("06-edit-actions.png"));
+
+    // 7 字体、文字颜色、背景色与自动换行结果。
+    ui->editor->setPlainText(QStringLiteral(
+        "字体与颜色设置结果\n"
+        "当前编辑区使用 15 pt Menlo、蓝色文字和浅黄色背景。\n"
+        "关闭自动换行后，较长的一行会保持在同一行中，用户可以通过水平滚动查看完整内容。"));
+    QFont evidenceFont(QStringLiteral("Menlo"), 15);
+    ui->editor->setFont(evidenceFont);
+    QPalette formatPalette = ui->editor->palette();
+    formatPalette.setColor(QPalette::Text, QColor(27, 86, 170));
+    formatPalette.setColor(QPalette::Base, QColor(255, 252, 224));
+    ui->editor->setPalette(formatPalette);
+    ui->actionWrap->setChecked(false);
+    statusBar()->showMessage(tr("字体：Menlo 15 pt；文字：蓝色；背景：浅黄色；自动换行：关闭"));
+    saveMain(QStringLiteral("07-formatting-result.png"));
+
+    // 8 工具栏、状态栏和状态信息。
+    ui->editor->setPalette(QPalette());
+    ui->editor->setFont(QFont(QStringLiteral("Menlo"), 12));
+    ui->actionWrap->setChecked(true);
+    ui->mainToolBar->show();
+    ui->statusbar->show();
+    ui->editor->setPlainText(QStringLiteral("状态栏验证\n第二行\n光标位于第三行第六列"));
+    QTextCursor statusCursor = ui->editor->textCursor();
+    statusCursor.movePosition(QTextCursor::End);
+    ui->editor->setTextCursor(statusCursor);
+    updateStatus();
+    saveMain(QStringLiteral("08-toolbar-statusbar.png"));
+
+    // 9 cut/copy/paste 的使能状态（有选区 + 剪贴板有文本）。
+    ui->editor->setPlainText(QStringLiteral("选择这段文字后，剪切和复制按钮应立即启用。"));
+    QTextCursor actionCursor = ui->editor->textCursor();
+    actionCursor.setPosition(0);
+    actionCursor.setPosition(6, QTextCursor::KeepAnchor);
+    ui->editor->setTextCursor(actionCursor);
+    QApplication::clipboard()->setText(QStringLiteral("可粘贴内容"));
+    updateActions();
+    statusBar()->showMessage(tr("Action状态：cut=启用  copy=启用  paste=启用"));
+    saveMain(QStringLiteral("09-action-enabled.png"));
+
+    // 10 连续查找后的实际选中结果。
+    ui->editor->setPlainText(QStringLiteral("Qt 是跨平台框架。Qt Widgets 用于构建桌面界面。再次出现 Qt。"));
+    ui->editor->moveCursor(QTextCursor::Start);
+    findText(QStringLiteral("Qt"), false, true);
+    findText(QStringLiteral("Qt"), false, true);
+    statusBar()->showMessage(tr("连续查找：已定位到第二个 Qt"));
+    saveMain(QStringLiteral("10-find-result.png"));
+
+    // 11 全部替换的实际结果。
+    ui->editor->setPlainText(QStringLiteral("cat CAT cat"));
+    const int replaced = replaceAll(QStringLiteral("cat"), QStringLiteral("dog"), false);
+    statusBar()->showMessage(tr("全部替换完成：共替换 %1 处，可一次撤销").arg(replaced));
+    saveMain(QStringLiteral("11-replace-all-result.png"));
+
+    // 12 行号区滚动与多行显示结果。
+    QStringList numberedLines;
+    for (int i = 1; i <= 18; ++i)
+        numberedLines << tr("第 %1 行：行号区域随文本块同步绘制").arg(i);
+    ui->editor->setPlainText(numberedLines.join(QLatin1Char('\n')));
+    ui->actionLineNumbers->setChecked(true);
+    ui->editor->moveCursor(QTextCursor::End);
+    updateStatus();
+    saveMain(QStringLiteral("12-line-numbers.png"));
+
+    // 退出取证模式时不触发未保存询问。
+    ui->editor->document()->setModified(false);
 }
